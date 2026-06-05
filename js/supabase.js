@@ -5,8 +5,13 @@
 const SUPABASE_URL = "https://eecydiklyryzffenmpwn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_EL8uCS_WsTmOMRnJUyRtag_365G4ez9";
 
-window.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+window.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
+});
 
 const supabaseClient =
 supabase.createClient(
