@@ -1,7 +1,7 @@
 const SUPABASE_URL = "https://eecydiklyryzffenmpwn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_EL8uCS_WsTmOMRnJUyRtag_365G4ez9";
 
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const client = window.client;
 
 const ALLOWED_EMAIL = "adrianponton000@gmail.com";
 
