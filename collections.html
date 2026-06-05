@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CAEL — Collections</title>
+
+<link
+rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link
+rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="css/style.css">
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+NAVBAR
+========================================== -->
+
+<header
+class="navbar scrolled"
+id="navbar">
+
+    <div class="navbar-container">
+
+        <a
+        href="index.html"
+        class="navbar-logo">
+
+            <img
+            id="brand-logo"
+            src="https://eecydiklyryzffenmpwn.supabase.co/storage/v1/object/public/cael-assets/logo/logotipo.001.png"
+            alt="CAEL">
+
+        </a>
+
+        <nav class="navbar-menu">
+
+            <a href="index.html">Home</a>
+            <a href="catalog.html">Catalog</a>
+            <a href="collections.html">Collections</a>
+            <a href="history.html">History</a>
+            <a href="cart.html">Cart</a>
+
+        </nav>
+
+        <button
+        id="mobile-toggle"
+        class="mobile-toggle">
+
+            ☰
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ==========================================
+MOBILE MENU
+========================================== -->
+
+<div
+class="mobile-menu"
+id="mobile-menu">
+
+    <a href="index.html">Home</a>
+    <a href="catalog.html">Catalog</a>
+    <a href="collections.html">Collections</a>
+    <a href="history.html">History</a>
+    <a href="cart.html">Cart</a>
+
+</div>
+
+
+<!-- ==========================================
+PAGE HERO
+========================================== -->
+
+<section class="collections-hero">
+
+    <div class="collections-hero-content">
+
+        <span>
+            CAEL COLLECTIONS
+        </span>
+
+        <h1>
+
+            Curated Systems
+            Of Modern Menswear
+
+        </h1>
+
+        <p>
+
+            Collections built around
+            architecture, movement,
+            technology and elevated
+            everyday essentials.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+COLLECTIONS GRID
+========================================== -->
+
+<section
+class="collections-section">
+
+    <div
+    id="collections-grid"
+    class="collections-grid">
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+FEATURED PRODUCTS
+========================================== -->
+
+<section
+class="featured-products">
+
+    <div class="section-header">
+
+        <span>
+            SELECTED PRODUCTS
+        </span>
+
+        <h2>
+            Featured Pieces
+        </h2>
+
+    </div>
+
+    <div
+    id="collection-products-grid"
+    class="products-grid">
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+FOOTER
+========================================== -->
+
+<footer class="footer">
+
+    <div class="footer-brand">
+
+        <img
+        id="footer-logo"
+        src="https://eecydiklyryzffenmpwn.supabase.co/storage/v1/object/public/cael-assets/logo/logotipo.001.png"
+        alt="CAEL">
+
+    </div>
+
+    <p id="footer-text">
+
+        CAEL — Technology Driven Menswear.
+
+    </p>
+
+</footer>
+
+
+<!-- ==========================================
+SUPABASE
+========================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/app.js"></script>
+
+
+<!-- ==========================================
+COLLECTIONS LOGIC
+========================================== -->
+
+<script>
+
+/* ==========================================
+LOAD COLLECTIONS
+========================================== */
+
+async function renderCollections(){
+
+    const grid =
+    document.getElementById(
+        "collections-grid"
+    );
+
+    if(!grid) return;
+
+    const collections =
+    await getCollections();
+
+    grid.innerHTML = "";
+
+    if(collections.length === 0){
+
+        grid.innerHTML = `
+
+        <div
+        class="empty-state">
+
+            <h3>
+                No Collections Yet
+            </h3>
+
+            <p>
+                Create collections
+                from the admin panel.
+            </p>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+    collections.forEach(collection => {
+
+        grid.innerHTML += `
+
+        <article
+        class="collection-card">
+
+            <div
+            class="collection-image">
+
+                <img
+                src="${collection.banner_url}"
+                alt="${collection.name}">
+
+            </div>
+
+            <div
+            class="collection-content">
+
+                <span>
+
+                    COLLECTION
+
+                </span>
+
+                <h2>
+
+                    ${collection.name}
+
+                </h2>
+
+                <p>
+
+                    ${
+                        collection.description ||
+                        ""
+                    }
+
+                </p>
+
+            </div>
+
+        </article>
+
+        `;
+
+    });
+
+}
+
+
+/* ==========================================
+FEATURED PRODUCTS
+========================================== */
+
+async function renderCollectionProducts(){
+
+    const grid =
+    document.getElementById(
+        "collection-products-grid"
+    );
+
+    if(!grid) return;
+
+    const products =
+    await getFeaturedProducts();
+
+    grid.innerHTML = "";
+
+    products.forEach(product => {
+
+        grid.innerHTML += `
+
+        <article
+        class="product-card">
+
+            <a
+            href="
+            product.html?id=${product.id}
+            ">
+
+                <img
+                src="${product.image_url}"
+                alt="${product.name}">
+
+                <div
+                class="product-card-content">
+
+                    <h3>
+
+                        ${product.name}
+
+                    </h3>
+
+                    <p>
+
+                        ${product.category}
+
+                    </p>
+
+                    <div
+                    class="product-price">
+
+                        $${Number(
+                            product.price
+                        ).toFixed(2)}
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </article>
+
+        `;
+
+    });
+
+}
+
+
+/* ==========================================
+INIT
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await renderCollections();
+
+        await renderCollectionProducts();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
