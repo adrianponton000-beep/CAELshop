@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CAEL — Product</title>
+
+<link
+rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link
+rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="css/style.css">
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+NAVBAR
+========================================== -->
+
+<header
+class="navbar scrolled"
+id="navbar">
+
+    <div class="navbar-container">
+
+        <a
+        href="index.html"
+        class="navbar-logo">
+
+            <img
+            id="brand-logo"
+            src="https://eecydiklyryzffenmpwn.supabase.co/storage/v1/object/public/cael-assets/logo/logotipo.001.png"
+            alt="CAEL">
+
+        </a>
+
+        <nav class="navbar-menu">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="catalog.html">
+                Catalog
+            </a>
+
+            <a href="collections.html">
+                Collections
+            </a>
+
+            <a href="history.html">
+                History
+            </a>
+
+            <a href="cart.html">
+                Cart
+            </a>
+
+        </nav>
+
+        <button
+        id="mobile-toggle"
+        class="mobile-toggle">
+
+            ☰
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ==========================================
+MOBILE MENU
+========================================== -->
+
+<div
+class="mobile-menu"
+id="mobile-menu">
+
+    <a href="index.html">
+        Home
+    </a>
+
+    <a href="catalog.html">
+        Catalog
+    </a>
+
+    <a href="collections.html">
+        Collections
+    </a>
+
+    <a href="history.html">
+        History
+    </a>
+
+    <a href="cart.html">
+        Cart
+    </a>
+
+</div>
+
+
+<!-- ==========================================
+PRODUCT
+========================================== -->
+
+<section
+class="product-page">
+
+    <div
+    id="product-page">
+
+        <div
+        class="product-loading">
+
+            Loading Product...
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+RELATED PRODUCTS
+========================================== -->
+
+<section
+class="related-products">
+
+    <div class="section-header">
+
+        <span>
+            MORE PRODUCTS
+        </span>
+
+        <h2>
+            You May Also Like
+        </h2>
+
+    </div>
+
+    <div
+    id="related-products-grid"
+    class="products-grid">
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+FOOTER
+========================================== -->
+
+<footer class="footer">
+
+    <div class="footer-brand">
+
+        <img
+        id="footer-logo"
+        src="https://eecydiklyryzffenmpwn.supabase.co/storage/v1/object/public/cael-assets/logo/logotipo.001.png"
+        alt="CAEL">
+
+    </div>
+
+    <p id="footer-text">
+
+        CAEL — Technology Driven Menswear.
+
+    </p>
+
+</footer>
+
+
+<!-- ==========================================
+SUPABASE
+========================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/app.js"></script>
+
+
+<!-- ==========================================
+PRODUCT PAGE LOGIC
+========================================== -->
+
+<script>
+
+let currentProduct = null;
+
+
+/* ==========================================
+PRODUCT DETAIL
+========================================== */
+
+async function renderProduct(){
+
+    const container =
+    document.getElementById(
+        "product-page"
+    );
+
+    const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+    const id =
+    params.get("id");
+
+    if(!id){
+
+        container.innerHTML = `
+        <h2>
+            Product Not Found
+        </h2>
+        `;
+
+        return;
+
+    }
+
+    const product =
+    await getProductById(id);
+
+    currentProduct =
+    product;
+
+    if(!product){
+
+        container.innerHTML = `
+        <h2>
+            Product Not Found
+        </h2>
+        `;
+
+        return;
+
+    }
+
+    container.innerHTML = `
+
+    <div class="product-layout">
+
+        <div class="product-gallery">
+
+            <img
+            src="${product.image_url}"
+            alt="${product.name}">
+
+        </div>
+
+        <div class="product-info">
+
+            <span
+            class="product-category">
+
+                ${product.category}
+
+            </span>
+
+            <h1>
+
+                ${product.name}
+
+            </h1>
+
+            <p
+            class="product-description">
+
+                ${product.description}
+
+            </p>
+
+            <div
+            class="product-price-large">
+
+                $${Number(
+                    product.price
+                ).toFixed(2)}
+
+            </div>
+
+            <div
+            class="quantity-selector">
+
+                <button
+                id="qty-minus">
+
+                    −
+
+                </button>
+
+                <input
+                type="number"
+                id="product-qty"
+                value="1"
+                min="1">
+
+                <button
+                id="qty-plus">
+
+                    +
+
+                </button>
+
+            </div>
+
+            <button
+            class="btn-primary add-cart-btn"
+            id="add-to-cart-btn">
+
+                Add To Cart
+
+            </button>
+
+        </div>
+
+    </div>
+
+    `;
+
+    setupQuantity();
+
+    setupAddToCart();
+
+}
+
+
+/* ==========================================
+QUANTITY
+========================================== */
+
+function setupQuantity(){
+
+    const minus =
+    document.getElementById(
+        "qty-minus"
+    );
+
+    const plus =
+    document.getElementById(
+        "qty-plus"
+    );
+
+    const input =
+    document.getElementById(
+        "product-qty"
+    );
+
+    if(!minus) return;
+
+    minus.addEventListener(
+        "click",
+        () => {
+
+            if(
+                Number(
+                    input.value
+                ) > 1
+            ){
+
+                input.value =
+                Number(
+                    input.value
+                ) - 1;
+
+            }
+
+        }
+    );
+
+    plus.addEventListener(
+        "click",
+        () => {
+
+            input.value =
+            Number(
+                input.value
+            ) + 1;
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+ADD TO CART
+========================================== */
+
+function setupAddToCart(){
+
+    const button =
+    document.getElementById(
+        "add-to-cart-btn"
+    );
+
+    if(!button) return;
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            const quantity =
+            Number(
+
+                document
+                .getElementById(
+                    "product-qty"
+                )
+                .value
+
+            );
+
+            const cart =
+            getCart();
+
+            const existing =
+            cart.find(
+                item =>
+                item.id ===
+                currentProduct.id
+            );
+
+            if(existing){
+
+                existing.quantity +=
+                quantity;
+
+            }else{
+
+                cart.push({
+
+                    ...currentProduct,
+
+                    quantity
+
+                });
+
+            }
+
+            saveCart(cart);
+
+            updateCartCount();
+
+            button.textContent =
+            "Added ✓";
+
+            setTimeout(() => {
+
+                button.textContent =
+                "Add To Cart";
+
+            },1500);
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+RELATED PRODUCTS
+========================================== */
+
+async function renderRelatedProducts(){
+
+    const grid =
+    document.getElementById(
+        "related-products-grid"
+    );
+
+    if(!grid) return;
+
+    const products =
+    await getProducts();
+
+    grid.innerHTML = "";
+
+    products
+    .slice(0,3)
+    .forEach(product => {
+
+        grid.innerHTML += `
+
+        <article
+        class="product-card">
+
+            <a
+            href="
+            product.html?id=${product.id}
+            ">
+
+                <img
+                src="${product.image_url}"
+                alt="${product.name}">
+
+                <div
+                class="product-card-content">
+
+                    <h3>
+
+                        ${product.name}
+
+                    </h3>
+
+                    <p>
+
+                        ${product.category}
+
+                    </p>
+
+                    <div
+                    class="product-price">
+
+                        $${Number(
+                            product.price
+                        ).toFixed(2)}
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </article>
+
+        `;
+
+    });
+
+}
+
+
+/* ==========================================
+INIT
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await renderProduct();
+
+        await renderRelatedProducts();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
