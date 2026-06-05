@@ -2,11 +2,10 @@
    CAEL — SUPABASE CONFIG
 ========================================== */
 
-const SUPABASE_URL =
-"https://eecydiklyryzffenmpwn.supabase.co";
+const SUPABASE_URL = "https://eecydiklyryzffenmpwn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_EL8uCS_WsTmOMRnJUyRtag_365G4ez9";
 
-const SUPABASE_ANON_KEY =
-"sb_publishable_EL8uCS_WsTmOMRnJUyRtag_365G4ez9";
+window.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
 const supabaseClient =
