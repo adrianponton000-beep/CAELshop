@@ -1,9 +1,11 @@
-const SUPABASE_URL = "https://eecydiklyryzffenmpwn.supabase.co";
-const SUPABASE_KEY = "sb_publishable_EL8uCS_WsTmOMRnJUyRtag_365G4ez9";
+<div id="login">
+  <input id="access" placeholder="Access code">
+  <button onclick="login()">Enter</button>
+</div>
 
-const client = window.client;
-
-const ALLOWED_EMAIL = "adrianponton000@gmail.com";
+<div id="panel" style="display:none;">
+  ADMIN PANEL
+</div>
 
 /* ==========================
 AUTH GUARD
