@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CAEL — Cart</title>
+
+<link
+rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link
+rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="css/style.css">
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+NAVBAR
+========================================== -->
+
+<header
+class="navbar scrolled">
+
+    <div class="navbar-container">
+
+        <a
+        href="index.html"
+        class="navbar-logo">
+
+            <img
+            src="https://eecydiklyryzffenmpwn.supabase.co/storage/v1/object/public/cael-assets/logo/logotipo.001.png"
+            alt="CAEL">
+
+        </a>
+
+        <nav class="navbar-menu">
+
+            <a href="index.html">Home</a>
+            <a href="catalog.html">Catalog</a>
+            <a href="collections.html">Collections</a>
+            <a href="history.html">History</a>
+            <a href="cart.html">Cart</a>
+
+        </nav>
+
+        <button
+        id="mobile-toggle"
+        class="mobile-toggle">
+
+            ☰
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ==========================================
+MOBILE MENU
+========================================== -->
+
+<div
+class="mobile-menu"
+id="mobile-menu">
+
+    <a href="index.html">Home</a>
+    <a href="catalog.html">Catalog</a>
+    <a href="collections.html">Collections</a>
+    <a href="history.html">History</a>
+    <a href="cart.html">Cart</a>
+
+</div>
+
+
+<!-- ==========================================
+PAGE HERO
+========================================== -->
+
+<section
+class="cart-hero">
+
+    <span>
+        SHOPPING CART
+    </span>
+
+    <h1>
+
+        Review
+        Your Selection
+
+    </h1>
+
+</section>
+
+
+<!-- ==========================================
+CART LAYOUT
+========================================== -->
+
+<section
+class="cart-page">
+
+    <div
+    class="cart-layout">
+
+        <div
+        id="cart-items-container"
+        class="cart-items">
+
+        </div>
+
+
+        <aside
+        class="cart-summary">
+
+            <h3>
+
+                Order Summary
+
+            </h3>
+
+            <div
+            class="summary-line">
+
+                <span>
+                    Items
+                </span>
+
+                <span
+                id="cart-items-count">
+
+                    0
+
+                </span>
+
+            </div>
+
+            <div
+            class="summary-line">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <span
+                id="cart-subtotal">
+
+                    $0.00
+
+                </span>
+
+            </div>
+
+            <div
+            class="summary-line total">
+
+                <span>
+                    Total
+                </span>
+
+                <span
+                id="cart-total">
+
+                    $0.00
+
+                </span>
+
+            </div>
+
+            <a
+            href="#checkout"
+            class="btn-primary">
+
+                Proceed To Checkout
+
+            </a>
+
+        </aside>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+CHECKOUT
+========================================== -->
+
+<section
+id="checkout"
+class="checkout-section">
+
+    <div
+    class="checkout-container">
+
+        <span>
+
+            CHECKOUT
+
+        </span>
+
+        <h2>
+
+            Shipping Information
+
+        </h2>
+
+        <form
+        id="checkout-form"
+        class="checkout-form">
+
+            <input
+            type="text"
+            placeholder="Full Name"
+            required>
+
+            <input
+            type="email"
+            placeholder="Email Address"
+            required>
+
+            <input
+            type="tel"
+            placeholder="Phone Number"
+            required>
+
+            <textarea
+            placeholder="Shipping Address"
+            required></textarea>
+
+            <button
+            type="submit"
+            class="btn-primary">
+
+                Register Order
+
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+FOOTER
+========================================== -->
+
+<footer
+class="footer">
+
+    <div
+    class="footer-brand">
+
+        <img
+        src="https://eecydiklyryzffenmpwn.supabase.co/storage/v1/object/public/cael-assets/logo/logotipo.001.png"
+        alt="CAEL">
+
+    </div>
+
+    <p>
+
+        CAEL — Technology Driven Menswear.
+
+    </p>
+
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+
+
+<script>
+
+/* ==========================================
+STORAGE
+========================================== */
+
+function getCartItems(){
+
+    return JSON.parse(
+        localStorage.getItem(
+            "cael_cart"
+        )
+    ) || [];
+
+}
+
+
+function saveCartItems(cart){
+
+    localStorage.setItem(
+        "cael_cart",
+        JSON.stringify(cart)
+    );
+
+}
+
+
+/* ==========================================
+REMOVE ITEM
+========================================== */
+
+function removeCartItem(id){
+
+    let cart =
+    getCartItems();
+
+    cart =
+    cart.filter(
+        item =>
+        item.id !== id
+    );
+
+    saveCartItems(cart);
+
+    renderCart();
+
+}
+
+
+/* ==========================================
+CHANGE QUANTITY
+========================================== */
+
+function changeQuantity(
+    id,
+    amount
+){
+
+    const cart =
+    getCartItems();
+
+    const item =
+    cart.find(
+        p => p.id === id
+    );
+
+    if(!item) return;
+
+    item.quantity += amount;
+
+    if(item.quantity < 1){
+
+        item.quantity = 1;
+
+    }
+
+    saveCartItems(cart);
+
+    renderCart();
+
+}
+
+
+/* ==========================================
+RENDER CART
+========================================== */
+
+function renderCart(){
+
+    const container =
+    document.getElementById(
+        "cart-items-container"
+    );
+
+    const count =
+    document.getElementById(
+        "cart-items-count"
+    );
+
+    const subtotal =
+    document.getElementById(
+        "cart-subtotal"
+    );
+
+    const total =
+    document.getElementById(
+        "cart-total"
+    );
+
+    const cart =
+    getCartItems();
+
+    container.innerHTML = "";
+
+    let totalPrice = 0;
+
+    if(cart.length === 0){
+
+        container.innerHTML = `
+
+        <div
+        class="empty-cart">
+
+            <h3>
+
+                Your Cart Is Empty
+
+            </h3>
+
+            <p>
+
+                Explore the catalog
+                and add products.
+
+            </p>
+
+        </div>
+
+        `;
+
+    }
+
+    cart.forEach(item => {
+
+        totalPrice +=
+        Number(item.price) *
+        item.quantity;
+
+        container.innerHTML += `
+
+        <article
+        class="cart-item">
+
+            <img
+            src="${item.image_url}"
+            alt="${item.name}">
+
+            <div
+            class="cart-item-content">
+
+                <h3>
+
+                    ${item.name}
+
+                </h3>
+
+                <p>
+
+                    ${item.category}
+
+                </p>
+
+                <div
+                class="cart-item-price">
+
+                    $${Number(
+                        item.price
+                    ).toFixed(2)}
+
+                </div>
+
+            </div>
+
+            <div
+            class="cart-quantity">
+
+                <button
+                onclick="
+                changeQuantity(
+                ${item.id},
+                -1
+                )">
+
+                    −
+
+                </button>
+
+                <span>
+
+                    ${item.quantity}
+
+                </span>
+
+                <button
+                onclick="
+                changeQuantity(
+                ${item.id},
+                1
+                )">
+
+                    +
+
+                </button>
+
+            </div>
+
+            <button
+            class="remove-item"
+            onclick="
+            removeCartItem(
+            ${item.id}
+            )">
+
+                Remove
+
+            </button>
+
+        </article>
+
+        `;
+
+    });
+
+    count.textContent =
+    cart.length;
+
+    subtotal.textContent =
+    "$" +
+    totalPrice.toFixed(2);
+
+    total.textContent =
+    "$" +
+    totalPrice.toFixed(2);
+
+}
+
+
+/* ==========================================
+CHECKOUT
+========================================== */
+
+document
+.getElementById(
+    "checkout-form"
+)
+.addEventListener(
+    "submit",
+    e => {
+
+        e.preventDefault();
+
+        alert(
+            "Pedido registrado. Esta es una demostración UX/UI."
+        );
+
+        localStorage.removeItem(
+            "cael_cart"
+        );
+
+        renderCart();
+
+        e.target.reset();
+
+    }
+);
+
+
+/* ==========================================
+INIT
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        renderCart();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
