@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CAEL — Catalog</title>
+
+<link
+rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link
+rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="css/style.css">
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+NAVBAR
+========================================== -->
+
+<header
+class="navbar scrolled"
+id="navbar">
+
+    <div class="navbar-container">
+
+        <a
+        href="index.html"
+        class="navbar-logo">
+
+            <img
+            id="brand-logo"
+            src="https://eecydiklyryzffenmpwn.supabase.co/storage/v1/object/public/cael-assets/logo/logotipo.001.png"
+            alt="CAEL">
+
+        </a>
+
+        <nav class="navbar-menu">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="catalog.html">
+                Catalog
+            </a>
+
+            <a href="collections.html">
+                Collections
+            </a>
+
+            <a href="history.html">
+                History
+            </a>
+
+            <a href="cart.html">
+                Cart
+            </a>
+
+        </nav>
+
+        <button
+        id="mobile-toggle"
+        class="mobile-toggle">
+
+            ☰
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ==========================================
+MOBILE MENU
+========================================== -->
+
+<div
+class="mobile-menu"
+id="mobile-menu">
+
+    <a href="index.html">
+        Home
+    </a>
+
+    <a href="catalog.html">
+        Catalog
+    </a>
+
+    <a href="collections.html">
+        Collections
+    </a>
+
+    <a href="history.html">
+        History
+    </a>
+
+    <a href="cart.html">
+        Cart
+    </a>
+
+</div>
+
+
+<!-- ==========================================
+PAGE HEADER
+========================================== -->
+
+<section
+class="catalog-hero">
+
+    <div class="catalog-hero-content">
+
+        <span>
+            PRODUCT CATALOG
+        </span>
+
+        <h1>
+            Essential Pieces
+            For Modern Movement
+        </h1>
+
+        <p>
+
+            Explore the current
+            CAEL collection curated
+            around technology,
+            architecture and refined
+            menswear.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+FILTERS
+========================================== -->
+
+<section
+class="catalog-controls">
+
+    <div class="catalog-controls-inner">
+
+        <input
+        type="text"
+        id="search-input"
+        placeholder="Search Products">
+
+        <select
+        id="category-filter">
+
+            <option value="all">
+                All Categories
+            </option>
+
+            <option value="Camisetas">
+                Camisetas
+            </option>
+
+            <option value="Camisas">
+                Camisas
+            </option>
+
+            <option value="Chaquetas">
+                Chaquetas
+            </option>
+
+            <option value="Jeans">
+                Jeans
+            </option>
+
+            <option value="Accesorios">
+                Accesorios
+            </option>
+
+        </select>
+
+        <select
+        id="sort-products">
+
+            <option value="newest">
+                Newest
+            </option>
+
+            <option value="price-low">
+                Price Low To High
+            </option>
+
+            <option value="price-high">
+                Price High To Low
+            </option>
+
+        </select>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+PRODUCT GRID
+========================================== -->
+
+<section
+class="catalog-products">
+
+    <div
+    id="catalog-grid"
+    class="products-grid">
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+FOOTER
+========================================== -->
+
+<footer class="footer">
+
+    <div class="footer-brand">
+
+        <img
+        id="footer-logo"
+        src="https://eecydiklyryzffenmpwn.supabase.co/storage/v1/object/public/cael-assets/logo/logotipo.001.png"
+        alt="CAEL">
+
+    </div>
+
+    <p id="footer-text">
+
+        CAEL — Technology Driven Menswear.
+
+    </p>
+
+</footer>
+
+
+<!-- ==========================================
+SUPABASE
+========================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/app.js"></script>
+
+
+<!-- ==========================================
+CATALOG LOGIC
+========================================== -->
+
+<script>
+
+let allProducts = [];
+
+
+/* ===========================
+LOAD PRODUCTS
+=========================== */
+
+async function loadCatalog(){
+
+    const grid =
+    document.getElementById(
+        "catalog-grid"
+    );
+
+    if(!grid) return;
+
+    allProducts =
+    await getProducts();
+
+    renderCatalog(
+        allProducts
+    );
+
+}
+
+
+/* ===========================
+RENDER
+=========================== */
+
+function renderCatalog(products){
+
+    const grid =
+    document.getElementById(
+        "catalog-grid"
+    );
+
+    grid.innerHTML = "";
+
+    if(products.length === 0){
+
+        grid.innerHTML = `
+
+        <p
+        style="
+        color:#888;
+        text-align:center;
+        ">
+
+            No products found.
+
+        </p>
+
+        `;
+
+        return;
+
+    }
+
+    products.forEach(product => {
+
+        grid.innerHTML += `
+
+        <article
+        class="product-card">
+
+            <a
+            href="
+            product.html?id=${product.id}
+            ">
+
+                <img
+                src="${product.image_url}"
+                alt="${product.name}">
+
+                <div
+                class="product-card-content">
+
+                    <h3>
+
+                        ${product.name}
+
+                    </h3>
+
+                    <p>
+
+                        ${product.category}
+
+                    </p>
+
+                    <div
+                    class="product-price">
+
+                        $${Number(
+                            product.price
+                        ).toFixed(2)}
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </article>
+
+        `;
+
+    });
+
+}
+
+
+/* ===========================
+SEARCH
+=========================== */
+
+function setupSearch(){
+
+    const search =
+    document.getElementById(
+        "search-input"
+    );
+
+    search.addEventListener(
+        "input",
+        filterProducts
+    );
+
+}
+
+
+/* ===========================
+FILTER
+=========================== */
+
+function setupCategoryFilter(){
+
+    const filter =
+    document.getElementById(
+        "category-filter"
+    );
+
+    filter.addEventListener(
+        "change",
+        filterProducts
+    );
+
+}
+
+
+/* ===========================
+SORT
+=========================== */
+
+function setupSort(){
+
+    const sort =
+    document.getElementById(
+        "sort-products"
+    );
+
+    sort.addEventListener(
+        "change",
+        filterProducts
+    );
+
+}
+
+
+/* ===========================
+FILTER LOGIC
+=========================== */
+
+function filterProducts(){
+
+    const searchValue =
+    document
+    .getElementById(
+        "search-input"
+    )
+    .value
+    .toLowerCase();
+
+    const category =
+    document
+    .getElementById(
+        "category-filter"
+    )
+    .value;
+
+    const sort =
+    document
+    .getElementById(
+        "sort-products"
+    )
+    .value;
+
+    let filtered =
+    [...allProducts];
+
+    if(searchValue){
+
+        filtered =
+        filtered.filter(
+            product =>
+
+            product.name
+            .toLowerCase()
+            .includes(
+                searchValue
+            )
+        );
+
+    }
+
+    if(category !== "all"){
+
+        filtered =
+        filtered.filter(
+            product =>
+
+            product.category ===
+            category
+        );
+
+    }
+
+    if(sort === "price-low"){
+
+        filtered.sort(
+            (a,b)=>
+
+            Number(a.price) -
+            Number(b.price)
+        );
+
+    }
+
+    if(sort === "price-high"){
+
+        filtered.sort(
+            (a,b)=>
+
+            Number(b.price) -
+            Number(a.price)
+        );
+
+    }
+
+    renderCatalog(
+        filtered
+    );
+
+}
+
+
+/* ===========================
+INIT
+=========================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await loadCatalog();
+
+        setupSearch();
+
+        setupCategoryFilter();
+
+        setupSort();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
